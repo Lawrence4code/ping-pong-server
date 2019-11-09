@@ -40,3 +40,4 @@ Thumbs.db
 # app related files #
 ######################
 node_modules/
+.env

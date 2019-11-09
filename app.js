@@ -1,23 +1,20 @@
 const express = require('express');
 const cors = require('cors')
 
-// instance of express
-const app = express();
+const db = require('./db');
 
-// port
-const port = 8080;
+// internal imports
+const router = require('./router');
+
+// variables
+const app = express();
 
 // middlewares
 app.use(cors())
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// route
-app.get('/', (req, res) => {
-    res.send('root');
-})
+// route middleware
+app.use('/', router);
 
-// listening to port
-app.listen(port, () => {
-    console.log('server started at port', port)
-})
+module.exports = app;
