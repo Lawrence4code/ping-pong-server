@@ -17,14 +17,13 @@ exports.logout = function () {
 
 exports.register = function (req, res) {
     let user = new User(req.body);
-    console.log('res', req.body);
-    user.register();
-
-    if (user.errors.length) {
-        res.send(user.errors);
-    } else {
-        res.send('Congrats, registeration success');
-    }
+    user.register()
+        .then(() => {
+            res.send('Congrats, registeration success');
+        })
+        .catch((err) => {
+            res.status(409).send(err);
+        })
 }
 
 exports.home = function (res, res) {
