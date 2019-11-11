@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const userCollection = require('../db').collection('users');
 const validator = require('validator');
+const uuidv1 = require('uuid/v1');
 let User = function (data) {
     this.data = data;
     this.errors = [];
@@ -101,6 +102,7 @@ User.prototype.register = function () {
             // hash user password
             let salt = bcrypt.genSaltSync(10);
             this.data.password = bcrypt.hashSync(this.data.password, salt)
+            this.data.id = uuidv1();
             await userCollection.insertOne(this.data);
             resolve();
         } else {
