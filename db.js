@@ -1,11 +1,12 @@
-const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 dotenv.config();
 
 // variables
 const port = process.env.PORT;
 
-mongoose.connect(process.env.CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true })
+// mongo db connection
+mongoose.connect(process.env.MONGO_CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
 
     })
@@ -24,5 +25,8 @@ db.once('open', function () {
         console.log('server started at port', port)
     })
 });
+
+// to remote deprecated warning
+mongoose.set('useCreateIndex', true);
 
 module.exports = db;

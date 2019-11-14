@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "server": "nodemon db"
+    "server": "NODE_ENV=development nodemon db"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +16,7 @@
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.9",
+    "mongoose-beautiful-unique-validation": "^7.1.1",
     "uuid": "^3.3.3",
     "validator": "^12.0.0"
   },

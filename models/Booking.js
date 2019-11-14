@@ -1,50 +1,40 @@
-const bookingCollection = require('../db').collection('bookings');
-const validator = require('validator');
-let Booking = function (data) {
-    this.data = data;
-    this.errors = [];
-};
+const mongoose = require('mongoose');
 
+const environment = process.env.NODE_ENV;
 
-// validate user input
-Booking.prototype.validate = function () {
-    return new Promise(async (resolve, reject) => {
-        // // only if username is valid then check to see if its already exist
-        // if (this.data.username.length > 4 && this.data.username.length < 17 && validator.isAlphanumeric(this.data.username)) {
-        //     let usernameExists = await userCollection.findOne({ username: this.data.username })
-        //     if (usernameExists) {
-        //         this.errors.push('Username is already taken.')
-        //     }
-        // }
+const Schema = mongoose.Schema;
 
-        // // if email exist in the db
-        // if (validator.isEmail(this.data.email)) {
-        //     let emailExists = await userCollection.findOne({ email: this.data.email })
-        //     if (emailExists) {
-        //         this.errors.push('Email is already with us, please login to continue.')
-        //     }
-        // }
-        resolve();
-    }
-    )
-}
+// booking schema
+const bookingSchema = new Schema({
+    id: {
+        type: 'String',
+        required: true,
+    },
+    date: {
+        type: 'String',
+        required: true,
+        trim: true,
+    },
+    duration: {
+        type: 'Number',
+        required: true,
+        trim: true,
+    },
+    startTime: {
+        type: 'String',
+        required: true,
+        trim: true
+    },
+    endTime: {
+        type: 'String',
+        required: true,
+        trim: true
+    },
+    createdAt: {
+        type: 'String',
+        required: true,
+        trim: true
+    },
+});
 
-// reserve booking
-Booking.prototype.reserve = function () {
-    return new Promise(async (resolve, reject) => {
-        await this.validate()
-        // step 2: Only if no validation error, save to db
-        if (!this.errors.length) {
-            await bookingCollection.insertOne(this.data);
-            resolve();
-        } else {
-            reject(this.errors);
-        }
-    })
-}
-
-// edit booking yet to be created
-
-// cancel booking yet to be created
-
-module.exports = Booking;
+module.exports = mongoose.model('Booking', bookingSchema);
