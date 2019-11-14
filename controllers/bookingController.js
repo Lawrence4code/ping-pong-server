@@ -6,7 +6,7 @@ const connectionUri = process.env.MONGO_CONNECTION_STRING;
 module.exports = {
     // book a new slot
     book: (req, res) => {
-        mongoose.connect(connectionUri, { useNewUrlParser: true }, (err) => {
+        mongoose.connect(connectionUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
             let result = {};
             let status = 201;
             if (!err) {
