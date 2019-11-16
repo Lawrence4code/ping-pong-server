@@ -4,8 +4,8 @@ const Bookings = require('../models/Booking');
 const connectionUri = process.env.MONGO_CONNECTION_STRING;
 
 module.exports = {
-    // book a new slot
-    book: (req, res) => {
+    // booking a new slot
+    createBooking: (req, res) => {
         mongoose.connect(connectionUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
             let result = {};
             let status = 201;
@@ -50,6 +50,35 @@ module.exports = {
                         result.error = err;
                     }
                     res.status(status).send(result);
+                });
+            } else {
+                status = 500;
+                result.status = status;
+                result.error = err;
+                res.status(status).send(result);
+            }
+        });
+    },
+    // cancel booking
+    cancelBooking: (req, res) => {
+        const { bookingId } = req.body;
+        mongoose.connect(connectionUri, { useNewUrlParser: true }, (err) => {
+            let result = {};
+            let status = 200;
+
+            if (!err) {
+                Bookings.findOneAndRemove({ "_id": bookingId }, (err, booking) => {
+                    if (!err && booking) {
+                        status = 200;
+                        result.bookingId = bookingId;
+                        result.status = status;
+                        res.status(status).send({ bookingId, message: "Booking delete as requested" });
+                    } else {
+                        status = 404;
+                        result.status = status;
+                        result.error = err;
+                        res.status(status).send("Unable to find Requested Resource");
+                    }
                 });
             } else {
                 status = 500;
