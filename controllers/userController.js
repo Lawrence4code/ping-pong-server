@@ -20,7 +20,7 @@ module.exports = {
                         result.status = status;
                         result.result = user;
                     } else {
-                        status = 500;
+                        status = 404;
                         result.status = status;
                         result.error = err;
                     }
