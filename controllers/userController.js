@@ -52,7 +52,11 @@ module.exports = {
                                 const secret = process.env.JWT_SECRET;
                                 const token = jwt.sign(payload, secret, options);
 
-                                result.token = token;
+                                user = {
+                                    token: token,
+                                    userId: user._id,
+                                    username: name
+                                }
                                 result.status = status;
                                 result.result = user;
                             } else {

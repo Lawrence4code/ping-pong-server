@@ -34,7 +34,7 @@ module.exports = {
     },
     // get all bookings
     getBookings: (req, res) => {
-        mongoose.connect(connectionUri, { useNewUrlParser: true }, (err) => {
+        mongoose.connect(connectionUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
             let result = {};
             let status = 200;
             if (!err) {
@@ -62,7 +62,7 @@ module.exports = {
     // cancel booking
     cancelBooking: (req, res) => {
         const { bookingId } = req.body;
-        mongoose.connect(connectionUri, { useNewUrlParser: true }, (err) => {
+        mongoose.connect(connectionUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
             let result = {};
             let status = 200;
 
