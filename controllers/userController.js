@@ -16,6 +16,8 @@ module.exports = {
                 const user = new User({ name, email, password });
                 // save user with payload information
                 user.save((err, user) => {
+                    console.log(err);
+                    console.log(user);
                     if (!err) {
                         result.status = status;
                         result.result = user;

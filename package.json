@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node db",
-    "server": "NODE_ENV=development nodemon db"
+    "start": "NODE_ENV=prod node db",
+    "server": "NODE_ENV=dev nodemon db"
   },
   "author": "",
   "license": "ISC",
