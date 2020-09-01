@@ -6,86 +6,101 @@ const jwt = require('jsonwebtoken');
 const connectionUri = process.env.MONGO_CONNECTION_STRING;
 
 module.exports = {
-    // Register Logic
-    register: (req, res) => {
-        mongoose.connect(connectionUri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
-            let result = {};
-            let status = 201;
+  // Register Logic
+  register: (req, res) => {
+    mongoose.connect(
+      connectionUri,
+      { useNewUrlParser: true, useUnifiedTopology: true },
+      (err) => {
+        let result = {};
+        let status = 201;
+        if (!err) {
+          const { name, email, password } = req.body;
+          const user = new User({ name, email, password });
+          // save user with payload information
+          user.save((err, user) => {
             if (!err) {
-                const { name, email, password } = req.body;
-                const user = new User({ name, email, password });
-                // save user with payload information
-                user.save((err, user) => {
-                    console.log(err);
-                    console.log(user);
-                    if (!err) {
-                        result.status = status;
-                        result.result = user;
-                    } else {
-                        status = 404;
-                        result.status = status;
-                        result.error = err;
-                    }
-                    res.status(status).send(result);
-                });
+              result.status = status;
+              result.result = user;
+              result.message = 'Success';
             } else {
-                status = 500;
-                result.status = status;
-                result.error = err;
-                res.status(status).send(result);
+              status = 404;
+              result.status = status;
+              result.message = 'User Exists';
             }
-        });
-    },
-    // Login Logic
-    login: (req, res) => {
-        const { name, password } = req.body;
-        mongoose.connect(connectionUri, { useNewUrlParser: true }, (err) => {
-            let result = {};
-            let status = 200;
-            if (!err) {
-                User.findOne({ name }, (err, user) => {
-                    if (!err && user) {
-                        bcrypt.compare(password, user.password).then(match => {
-                            if (match) {
-                                status = 200;
-                                // Token config and generation
-                                const payload = { user: user.name };
-                                const options = { expiresIn: '2d', issuer: 'pingpongLLC' };
-                                const secret = process.env.JWT_SECRET;
-                                const token = jwt.sign(payload, secret, options);
+            res.status(status).send(result);
+          });
+        } else {
+          status = 500;
+          result.status = status;
+          result.message = 'Internal Error';
+          res.status(status).send(result);
+        }
+      }
+    );
+  },
+  // Login Logic
+  login: (req, res) => {
+    const { name, password } = req.body;
+    let result = {};
+    let status = 200;
+    try {
+      mongoose.connect(connectionUri, { useNewUrlParser: true }, (err) => {
+        if (!err) {
+          User.findOne({ name }, (err, user) => {
+            if (!err && user) {
+              bcrypt
+                .compare(password, user.password)
+                .then((match) => {
+                  if (match) {
+                    status = 200;
+                    // Token config and generation
+                    const payload = { user: user.name };
+                    const options = { expiresIn: '2d', issuer: 'pingpongLLC' };
+                    const secret = process.env.JWT_SECRET;
+                    const token = jwt.sign(payload, secret, options);
 
-                                user = {
-                                    token: token,
-                                    userId: user._id,
-                                    username: name
-                                }
-                                result.status = status;
-                                result.result = user;
-                            } else {
-                                status = 401;
-                                result.status = status;
-                                result.error = `Authentication error`;
-                            }
-                            res.status(status).send(result);
-                        }).catch(err => {
-                            status = 500;
-                            result.status = status;
-                            result.error = err;
-                            res.status(status).send(result);
-                        });
-                    } else {
-                        status = 404;
-                        result.status = status;
-                        result.error = err;
-                        res.status(status).send(result);
-                    }
+                    user = {
+                      token: token,
+                      userId: user._id,
+                      username: name,
+                    };
+                    result.status = status;
+                    result.result = user;
+                    result.message = 'Success';
+                  } else {
+                    status = 401;
+                    result.status = status;
+                    result.message = `Authentication error`;
+                  }
+                  res.status(status).send(result);
+                })
+                .catch((err) => {
+                  status = 500;
+                  result.status = status;
+                  result.message = 'Internal Error';
+                  res.status(status).send(result);
                 });
             } else {
-                status = 500;
-                result.status = status;
-                result.error = err;
-                res.status(status).send(result);
+              status = 404;
+              result.status = status;
+              result.message = 'Authentication error';
+              res.status(status).send(result);
             }
-        });
+          });
+        } else {
+          status = 500;
+          result.status = status;
+          result.error = err;
+          result.message = 'Internal Error';
+          res.status(status).send(result);
+        }
+      });
+    } catch (error) {
+      status = 500;
+      result.status = status;
+      result.message = 'Internal Error';
+      res.status(status).send(result);
     }
-}
+  },
+};
